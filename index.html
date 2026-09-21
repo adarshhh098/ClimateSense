@@ -764,4 +764,774 @@
     <script src="script.js"></script>
 
 </body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ClimateSense IoT-based indoor temperature and humidity monitoring dashboard">
+
+    <title>ClimateSense | Indoor Climate Monitoring</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">CS</div>
+
+            <div>
+                <h2>ClimateSense</h2>
+                <span>IoT Monitoring</span>
+            </div>
+        </div>
+
+        <nav class="navigation">
+
+            <button class="nav-item active" onclick="showPage('dashboard', this)">
+                <span>⌂</span>
+                Dashboard
+            </button>
+
+            <button class="nav-item" onclick="showPage('temperature', this)">
+                <span>°</span>
+                Temperature
+            </button>
+
+            <button class="nav-item" onclick="showPage('humidity', this)">
+                <span>◌</span>
+                Humidity
+            </button>
+
+            <button class="nav-item" onclick="showPage('history', this)">
+                <span>▤</span>
+                Historical Data
+            </button>
+
+            <button class="nav-item" onclick="showPage('status', this)">
+                <span>●</span>
+                System Status
+            </button>
+
+            <button class="nav-item" onclick="showPage('about', this)">
+                <span>ⓘ</span>
+                About
+            </button>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="connection-dot"></div>
+            <div>
+                <strong>System Online</strong>
+                <small>ThingSpeak Connected</small>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div>
+                <p class="top-label">IoT-BASED SMART INDOOR</p>
+                <h1 id="page-title">Climate Dashboard</h1>
+            </div>
+
+            <div class="top-right">
+
+                <div class="live-indicator">
+                    <span></span>
+                    LIVE
+                </div>
+
+                <button
+                    class="refresh-btn"
+                    onclick="loadData()"
+                    aria-label="Refresh climate data">
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section id="dashboard" class="page active-page">
+
+            <div class="hero-card">
+
+                <div class="hero-content">
+
+                    <span class="hero-tag">REAL-TIME ENVIRONMENT MONITORING</span>
+
+                    <h2>
+                        Monitor your indoor climate
+                        <br>
+                        from anywhere.
+                    </h2>
+
+                    <p>
+                        Temperature and humidity data collected by the
+                        DHT11 sensor is transmitted through the ESP32
+                        and stored on ThingSpeak.
+                    </p>
+
+                    <div class="architecture">
+                        <span>DHT11</span>
+                        <b>→</b>
+                        <span>ESP32</span>
+                        <b>→</b>
+                        <span>Wi-Fi</span>
+                        <b>→</b>
+                        <span>ThingSpeak</span>
+                    </div>
+
+                </div>
+
+                <div class="hero-status">
+
+                    <div class="pulse-circle">
+                        <div></div>
+                    </div>
+
+                    <span>DATA STREAM</span>
+
+                    <strong id="last-update">
+                        Waiting...
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- SENSOR CARDS -->
+
+            <div class="section-heading">
+
+                <div>
+                    <span>LIVE READINGS</span>
+                    <h2>Current Environment</h2>
+                </div>
+
+                <p>
+                    Updated automatically every 30 seconds
+                </p>
+
+            </div>
+
+
+            <div class="sensor-grid">
+
+                <!-- TEMPERATURE -->
+
+                <div class="sensor-card temperature-card">
+
+                    <div class="card-top">
+
+                        <div class="sensor-icon">
+                            °
+                        </div>
+
+                        <span class="card-status">
+                            LIVE
+                        </span>
+
+                    </div>
+
+                    <p class="card-label">
+                        TEMPERATURE
+                    </p>
+
+                    <div class="reading">
+                        <span id="temperature-value">--</span>
+                        <small>°C</small>
+                    </div>
+
+                    <div class="card-footer">
+                        <span>DHT11 Sensor</span>
+                        <span id="temperature-time">--</span>
+                    </div>
+
+                </div>
+
+
+                <!-- HUMIDITY -->
+
+                <div class="sensor-card humidity-card">
+
+                    <div class="card-top">
+
+                        <div class="sensor-icon">
+                            %
+                        </div>
+
+                        <span class="card-status">
+                            LIVE
+                        </span>
+
+                    </div>
+
+                    <p class="card-label">
+                        HUMIDITY
+                    </p>
+
+                    <div class="reading">
+                        <span id="humidity-value">--</span>
+                        <small>%</small>
+                    </div>
+
+                    <div class="card-footer">
+                        <span>DHT11 Sensor</span>
+                        <span id="humidity-time">--</span>
+                    </div>
+
+                </div>
+
+
+                <!-- DEVICE -->
+
+                <div class="sensor-card device-card">
+
+                    <div class="card-top">
+
+                        <div class="sensor-icon">
+                            ESP
+                        </div>
+
+                        <span class="card-status">
+                            ONLINE
+                        </span>
+
+                    </div>
+
+                    <p class="card-label">
+                        CONTROLLER
+                    </p>
+
+                    <div class="device-name">
+                        ESP32
+                    </div>
+
+                    <div class="card-footer">
+                        <span>Wi-Fi Connected</span>
+                        <span class="online-text">
+                            ● Online
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DASHBOARD GRAPHS -->
+
+            <div class="section-heading graph-heading">
+
+                <div>
+                    <span>DATA VISUALIZATION</span>
+                    <h2>Environmental Trends</h2>
+                </div>
+
+            </div>
+
+
+            <div class="graph-grid">
+
+                <div class="chart-card">
+
+                    <div class="chart-header">
+                        <div>
+                            <span>TEMPERATURE</span>
+                            <h3>Temperature Trend</h3>
+                        </div>
+
+                        <strong>°C</strong>
+                    </div>
+
+                    <canvas id="dashboardTemperatureChart"></canvas>
+
+                </div>
+
+
+                <div class="chart-card">
+
+                    <div class="chart-header">
+                        <div>
+                            <span>HUMIDITY</span>
+                            <h3>Humidity Trend</h3>
+                        </div>
+
+                        <strong>%</strong>
+                    </div>
+
+                    <canvas id="dashboardHumidityChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= TEMPERATURE ================= -->
+
+        <section id="temperature" class="page">
+
+            <div class="page-intro">
+
+                <span>TEMPERATURE MONITORING</span>
+
+                <h2>
+                    Indoor Temperature
+                </h2>
+
+                <p>
+                    Real-time temperature measurements collected
+                    from the DHT11 sensor.
+                </p>
+
+            </div>
+
+
+            <div class="large-chart-card">
+
+                <div class="chart-header">
+
+                    <div>
+                        <span>FIELD 1</span>
+                        <h3>Temperature History</h3>
+                    </div>
+
+                    <div class="chart-value">
+                        <strong id="temperature-page-value">
+                            --
+                        </strong>
+                        °C
+                    </div>
+
+                </div>
+
+                <div class="large-chart-container">
+                    <canvas id="temperatureChart"></canvas>
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= HUMIDITY ================= -->
+
+        <section id="humidity" class="page">
+
+            <div class="page-intro">
+
+                <span>HUMIDITY MONITORING</span>
+
+                <h2>
+                    Indoor Humidity
+                </h2>
+
+                <p>
+                    Real-time relative humidity measurements
+                    collected from the DHT11 sensor.
+                </p>
+
+            </div>
+
+
+            <div class="large-chart-card">
+
+                <div class="chart-header">
+
+                    <div>
+                        <span>FIELD 2</span>
+                        <h3>Humidity History</h3>
+                    </div>
+
+                    <div class="chart-value">
+                        <strong id="humidity-page-value">
+                            --
+                        </strong>
+                        %
+                    </div>
+
+                </div>
+
+                <div class="large-chart-container">
+                    <canvas id="humidityChart"></canvas>
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= HISTORY ================= -->
+
+        <section id="history" class="page">
+
+            <div class="page-intro">
+
+                <span>HISTORICAL DATA</span>
+
+                <h2>
+                    Environmental Readings
+                </h2>
+
+                <p>
+                    Recent temperature and humidity readings
+                    received from ThingSpeak.
+                </p>
+
+            </div>
+
+
+            <div class="history-card">
+
+                <div class="history-header">
+
+                    <div>
+                        <span>RECENT READINGS</span>
+                        <h3>Sensor Data</h3>
+                    </div>
+
+                    <button
+                        class="download-btn"
+                        onclick="downloadCSV()">
+                        ↓ Download CSV
+                    </button>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>TIME</th>
+                                <th>TEMPERATURE</th>
+                                <th>HUMIDITY</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="history-table">
+
+                            <tr>
+                                <td colspan="3">
+                                    Loading data...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= STATUS ================= -->
+
+        <section id="status" class="page">
+
+            <div class="page-intro">
+
+                <span>SYSTEM STATUS</span>
+
+                <h2>
+                    Monitoring System
+                </h2>
+
+                <p>
+                    Current status of the components used
+                    in the indoor climate monitoring system.
+                </p>
+
+            </div>
+
+
+            <div class="status-grid">
+
+
+                <div class="status-card">
+
+                    <div class="status-icon">
+                        ✓
+                    </div>
+
+                    <div>
+                        <span>MICROCONTROLLER</span>
+
+                        <h3>
+                            ESP32
+                        </h3>
+
+                        <p>
+                            Wi-Fi communication enabled
+                        </p>
+                    </div>
+
+                    <strong class="status-online">
+                        ONLINE
+                    </strong>
+
+                </div>
+
+
+                <div class="status-card">
+
+                    <div class="status-icon">
+                        ✓
+                    </div>
+
+                    <div>
+                        <span>SENSOR</span>
+
+                        <h3>
+                            DHT11
+                        </h3>
+
+                        <p>
+                            Temperature and humidity sensor
+                        </p>
+                    </div>
+
+                    <strong class="status-online">
+                        ACTIVE
+                    </strong>
+
+                </div>
+
+
+                <div class="status-card">
+
+                    <div class="status-icon">
+                        ✓
+                    </div>
+
+                    <div>
+                        <span>CLOUD PLATFORM</span>
+
+                        <h3>
+                            ThingSpeak
+                        </h3>
+
+                        <p>
+                            IoT data storage and visualization
+                        </p>
+                    </div>
+
+                    <strong class="status-online">
+                        CONNECTED
+                    </strong>
+
+                </div>
+
+
+                <div class="status-card">
+
+                    <div class="status-icon">
+                        ↻
+                    </div>
+
+                    <div>
+                        <span>AUTO REFRESH</span>
+
+                        <h3>
+                            30 Seconds
+                        </h3>
+
+                        <p>
+                            Website automatically refreshes data
+                        </p>
+                    </div>
+
+                    <strong class="status-online">
+                        ACTIVE
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= ABOUT ================= -->
+
+        <section id="about" class="page">
+
+            <div class="page-intro">
+
+                <span>ABOUT THE PROJECT</span>
+
+                <h2>
+                    IoT-Based Smart Indoor
+                    Climate Monitoring System
+                </h2>
+
+                <p>
+                    A simple IoT system designed to monitor
+                    indoor temperature and humidity in real time.
+                </p>
+
+            </div>
+
+
+            <div class="about-grid">
+
+                <div class="about-card">
+
+                    <span>PROJECT OVERVIEW</span>
+
+                    <h3>
+                        Smart Indoor Monitoring
+                    </h3>
+
+                    <p>
+                        The system uses a DHT11 temperature and
+                        humidity sensor connected to an ESP32
+                        microcontroller. The ESP32 collects the
+                        sensor readings and transmits the data
+                        through Wi-Fi to the ThingSpeak IoT cloud
+                        platform.
+                    </p>
+
+                    <p>
+                        The web dashboard provides a convenient
+                        interface for viewing current and historical
+                        environmental readings.
+                    </p>
+
+                </div>
+
+
+                <div class="about-card">
+
+                    <span>SYSTEM ARCHITECTURE</span>
+
+                    <div class="architecture-large">
+
+                        <div>
+                            <strong>DHT11</strong>
+                            <small>Sensor</small>
+                        </div>
+
+                        <b>→</b>
+
+                        <div>
+                            <strong>ESP32</strong>
+                            <small>Controller</small>
+                        </div>
+
+                        <b>→</b>
+
+                        <div>
+                            <strong>Wi-Fi</strong>
+                            <small>Communication</small>
+                        </div>
+
+                        <b>→</b>
+
+                        <div>
+                            <strong>ThingSpeak</strong>
+                            <small>Cloud</small>
+                        </div>
+
+                        <b>→</b>
+
+                        <div>
+                            <strong>Dashboard</strong>
+                            <small>Visualization</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="about-card">
+
+                    <span>TECHNOLOGIES</span>
+
+                    <div class="technology-list">
+
+                        <div>
+                            <strong>ESP32</strong>
+                            <span>Microcontroller</span>
+                        </div>
+
+                        <div>
+                            <strong>DHT11</strong>
+                            <span>Environmental Sensor</span>
+                        </div>
+
+                        <div>
+                            <strong>ThingSpeak</strong>
+                            <span>IoT Cloud Platform</span>
+                        </div>
+
+                        <div>
+                            <strong>HTML / CSS / JS</strong>
+                            <span>Web Dashboard</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            <p>
+                ClimateSense · IoT-Based Smart Indoor Climate Monitoring System
+            </p>
+
+            <span>
+                DHT11 + ESP32 + ThingSpeak
+            </span>
+
+        </footer>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
 </html>
