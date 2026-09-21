@@ -18,3 +18,9 @@ IoT-Based Smart Indoor Climate Monitoring System.
 - Graphical visualization
 - Historical data
 - Responsive web dashboard
+
+## Project Structure
+
+- `index.html` - Dashboard interface
+- `style.css` - Website styling
+- `script.js` - ThingSpeak data and dashboard logic
