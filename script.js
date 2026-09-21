@@ -9,17 +9,11 @@
    THINGSPEAK CONFIGURATION
    ========================================================= */
 
-// Replace this with your actual ThingSpeak Channel ID
-
 const CHANNEL_ID = "3420267";
 
-// If your ThingSpeak channel is PRIVATE,
-// put your Read API Key here.
-//
-// If your channel is PUBLIC,
-// leave this empty.
-
-const READ_API_KEY = "FGZOQ4YFUVANVEFS";
+// For a private ThingSpeak channel, enter the Read API Key.
+// For a public channel, leave this empty.
+const READ_API_KEY = "YOUR_READ_API_KEY";
 
 
 /* =========================================================
@@ -65,41 +59,28 @@ function showPage(pageId, clickedButton) {
         document.querySelectorAll(".page");
 
     pages.forEach(page => {
-
         page.classList.remove("active-page");
-
     });
-
 
     const selectedPage =
         document.getElementById(pageId);
 
     if (selectedPage) {
-
         selectedPage.classList.add("active-page");
-
     }
-
 
     const navItems =
         document.querySelectorAll(".nav-item");
 
     navItems.forEach(item => {
-
         item.classList.remove("active");
-
     });
 
-
     if (clickedButton) {
-
         clickedButton.classList.add("active");
-
     }
 
-
     updatePageTitle(pageId);
-
 }
 
 
@@ -134,14 +115,10 @@ function updatePageTitle(pageId) {
 
     };
 
-
     if (title) {
-
         title.textContent =
             titles[pageId] || "Climate Dashboard";
-
     }
-
 }
 
 
@@ -152,22 +129,15 @@ function updatePageTitle(pageId) {
 function formatTime(timestamp) {
 
     if (!timestamp) {
-
         return "--";
-
     }
-
 
     const date =
         new Date(timestamp);
 
-
     if (isNaN(date.getTime())) {
-
         return timestamp;
-
     }
-
 
     return date.toLocaleString(
         "en-IN",
@@ -178,7 +148,6 @@ function formatTime(timestamp) {
             minute: "2-digit"
         }
     );
-
 }
 
 
@@ -191,36 +160,27 @@ async function loadData() {
     const lastUpdate =
         document.getElementById("last-update");
 
-
     if (CHANNEL_ID === "YOUR_CHANNEL_ID") {
 
         showDemoData();
 
         if (lastUpdate) {
-
             lastUpdate.textContent =
                 "Demo Mode";
-
         }
 
         return;
-
     }
-
 
     try {
 
         if (lastUpdate) {
-
             lastUpdate.textContent =
                 "Loading...";
-
         }
-
 
         const response =
             await fetch(getFeedURL());
-
 
         if (!response.ok) {
 
@@ -230,14 +190,11 @@ async function loadData() {
 
         }
 
-
         const data =
             await response.json();
 
-
         sensorData =
             data.feeds || [];
-
 
         if (sensorData.length === 0) {
 
@@ -247,11 +204,9 @@ async function loadData() {
 
         }
 
-
         renderData();
 
         setConnectionStatus(true);
-
 
     } catch (error) {
 
@@ -260,19 +215,16 @@ async function loadData() {
             error
         );
 
-
         setConnectionStatus(false);
-
 
         if (lastUpdate) {
 
             lastUpdate.textContent =
-                "Connection Error";
+                "Unable to load data";
 
         }
 
     }
-
 }
 
 
@@ -285,9 +237,7 @@ function showDemoData() {
     const now =
         Date.now();
 
-
     sensorData = [];
-
 
     for (let i = 19; i >= 0; i--) {
 
@@ -296,18 +246,15 @@ function showDemoData() {
                 now - (i * 5 * 60 * 1000)
             );
 
-
         const temperature =
             25 +
             Math.sin(i / 3) * 2 +
             Math.random();
 
-
         const humidity =
             60 +
             Math.cos(i / 4) * 5 +
             Math.random() * 2;
-
 
         sensorData.push({
 
@@ -321,14 +268,11 @@ function showDemoData() {
                 humidity.toFixed(1)
 
         });
-
     }
-
 
     renderData();
 
     setConnectionStatus(true);
-
 }
 
 
@@ -343,71 +287,50 @@ function setConnectionStatus(connected) {
             ".sidebar-bottom strong"
         );
 
-
     const statusSmall =
         document.querySelector(
             ".sidebar-bottom small"
         );
-
 
     const dot =
         document.querySelector(
             ".connection-dot"
         );
 
-
     if (connected) {
 
         if (status) {
-
             status.textContent =
                 "System Online";
-
         }
-
 
         if (statusSmall) {
-
             statusSmall.textContent =
                 "ThingSpeak Connected";
-
         }
 
-
         if (dot) {
-
             dot.style.background =
                 "#5de19a";
-
         }
 
     } else {
 
         if (status) {
-
             status.textContent =
                 "Connection Error";
-
         }
-
 
         if (statusSmall) {
-
             statusSmall.textContent =
                 "ThingSpeak Offline";
-
         }
-
 
         if (dot) {
-
             dot.style.background =
                 "#e15d5d";
-
         }
-
     }
-
 }
 
 
@@ -418,19 +341,14 @@ function setConnectionStatus(connected) {
 function renderData() {
 
     if (!sensorData.length) {
-
         return;
-
     }
-
 
     const latest =
         sensorData[sensorData.length - 1];
 
-
     const temperature =
         parseFloat(latest.field1);
-
 
     const humidity =
         parseFloat(latest.field2);
@@ -443,12 +361,10 @@ function renderData() {
             "temperature-value"
         );
 
-
     const humidityValue =
         document.getElementById(
             "humidity-value"
         );
-
 
     if (temperatureValue) {
 
@@ -456,9 +372,7 @@ function renderData() {
             Number.isFinite(temperature)
                 ? temperature.toFixed(1)
                 : "--";
-
     }
-
 
     if (humidityValue) {
 
@@ -466,7 +380,6 @@ function renderData() {
             Number.isFinite(humidity)
                 ? humidity.toFixed(1)
                 : "--";
-
     }
 
 
@@ -477,14 +390,12 @@ function renderData() {
             "temperature-page-value"
         );
 
-
     if (temperaturePageValue) {
 
         temperaturePageValue.textContent =
             Number.isFinite(temperature)
                 ? temperature.toFixed(1)
                 : "--";
-
     }
 
 
@@ -495,14 +406,12 @@ function renderData() {
             "humidity-page-value"
         );
 
-
     if (humidityPageValue) {
 
         humidityPageValue.textContent =
             Number.isFinite(humidity)
                 ? humidity.toFixed(1)
                 : "--";
-
     }
 
 
@@ -511,46 +420,35 @@ function renderData() {
     const formattedTime =
         formatTime(latest.created_at);
 
-
     const lastUpdate =
         document.getElementById(
             "last-update"
         );
 
-
     if (lastUpdate) {
 
         lastUpdate.textContent =
             formattedTime;
-
     }
-
 
     const temperatureTime =
         document.getElementById(
             "temperature-time"
         );
 
-
     const humidityTime =
         document.getElementById(
             "humidity-time"
         );
 
-
     if (temperatureTime) {
-
         temperatureTime.textContent =
             formattedTime;
-
     }
 
-
     if (humidityTime) {
-
         humidityTime.textContent =
             formattedTime;
-
     }
 
 
@@ -562,7 +460,6 @@ function renderData() {
     /* CHARTS */
 
     drawCharts();
-
 }
 
 
@@ -577,13 +474,9 @@ function renderHistory() {
             "history-table"
         );
 
-
     if (!table) {
-
         return;
-
     }
-
 
     if (!sensorData.length) {
 
@@ -596,13 +489,10 @@ function renderHistory() {
         `;
 
         return;
-
     }
-
 
     const reversedData =
         [...sensorData].reverse();
-
 
     table.innerHTML =
         reversedData
@@ -611,10 +501,8 @@ function renderHistory() {
                 const temperature =
                     parseFloat(item.field1);
 
-
                 const humidity =
                     parseFloat(item.field2);
-
 
                 return `
                     <tr>
@@ -644,7 +532,6 @@ function renderHistory() {
 
             })
             .join("");
-
 }
 
 
@@ -661,7 +548,6 @@ function getLabels() {
         );
 
     });
-
 }
 
 
@@ -676,13 +562,11 @@ function getTemperatureValues() {
         const value =
             parseFloat(item.field1);
 
-
         return Number.isFinite(value)
             ? value
             : null;
 
     });
-
 }
 
 
@@ -697,13 +581,11 @@ function getHumidityValues() {
         const value =
             parseFloat(item.field2);
 
-
         return Number.isFinite(value)
             ? value
             : null;
 
     });
-
 }
 
 
@@ -807,7 +689,6 @@ function chartOptions(yTitle) {
         }
 
     };
-
 }
 
 
@@ -828,20 +709,13 @@ function createChart(
             canvasId
         );
 
-
     if (!canvas) {
-
         return existingChart;
-
     }
-
 
     if (existingChart) {
-
         existingChart.destroy();
-
     }
-
 
     return new Chart(
 
@@ -892,7 +766,6 @@ function createChart(
         }
 
     );
-
 }
 
 
@@ -902,13 +775,8 @@ function createChart(
 
 function drawCharts() {
 
-    const labels =
-        getLabels();
-
-
     const temperatures =
         getTemperatureValues();
-
 
     const humidities =
         getHumidityValues();
@@ -984,7 +852,6 @@ function drawCharts() {
             "%"
 
         );
-
 }
 
 
@@ -1001,33 +868,26 @@ function downloadCSV() {
         );
 
         return;
-
     }
-
 
     let csv =
         "Time,Temperature (°C),Humidity (%)\n";
-
 
     sensorData.forEach(item => {
 
         const time =
             formatTime(item.created_at);
 
-
         const temperature =
             item.field1 ?? "";
 
-
         const humidity =
             item.field2 ?? "";
-
 
         csv +=
             `"${time}",${temperature},${humidity}\n`;
 
     });
-
 
     const blob =
         new Blob(
@@ -1041,34 +901,25 @@ function downloadCSV() {
 
         );
 
-
     const url =
         URL.createObjectURL(blob);
-
 
     const link =
         document.createElement("a");
 
-
     link.href =
         url;
-
 
     link.download =
         "climatesense_data.csv";
 
-
     document.body.appendChild(link);
-
 
     link.click();
 
-
     document.body.removeChild(link);
 
-
     URL.revokeObjectURL(url);
-
 }
 
 
